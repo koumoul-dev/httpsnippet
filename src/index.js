@@ -103,7 +103,7 @@ HTTPSnippet.prototype.prepare = function (request) {
       request.postData.mimeType = 'multipart/form-data'
 
       if (request.postData.params) {
-        var form = new MultiPartForm()
+        /*var form = new MultiPartForm()
 
         // easter egg
         form._boundary = '---011000010111000001101001'
@@ -121,6 +121,18 @@ HTTPSnippet.prototype.prepare = function (request) {
 
         request.postData.boundary = form.getBoundary()
         request.headersObj['content-type'] = 'multipart/form-data; boundary=' + form.getBoundary()
+        */
+
+        // simpler management of multipart/form-data
+        // writing the real content of the files is probably not a good idea anyway
+        if (!request.postData.params) {
+          request.postData.text = ''
+        } else {
+          request.postData.paramsObj = request.postData.params.reduce(reducer, {})
+
+          // always overwrite
+          request.postData.text = qs.stringify(request.postData.paramsObj)
+        }
       }
       break
 
